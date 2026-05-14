@@ -1,0 +1,199 @@
+<h2>数据库设计（MySQL 8）</h2>
+<p class="subtitle">10 张核心表，覆盖四层账户体系 + 交易 + 权限 + 对账</p>
+
+<div style="overflow-x:auto">
+<div style="min-width:900px">
+
+<!-- Layer 1: Account hierarchy -->
+<div style="margin-bottom:6px;font-size:11px;color:#64b5f6;letter-spacing:1px;padding-left:4px">▌ 账户体系（四层）</div>
+<div style="display:flex;gap:10px;margin-bottom:4px;align-items:flex-start">
+
+  <!-- merchant -->
+  <div style="background:#0d2137;border:1px solid #4a90d9;border-radius:8px;padding:12px;min-width:180px">
+    <div style="color:#64b5f6;font-weight:700;font-size:13px;margin-bottom:8px">merchant 商户</div>
+    <div style="font-size:11px;line-height:2;font-family:monospace;color:#ccc">
+      <span style="color:#ffcc02">id</span> bigint PK<br>
+      merchant_no varchar <span style="color:#555">UNIQUE</span><br>
+      name varchar<br>
+      status tinyint<br>
+      contact_email varchar<br>
+      contact_phone varchar<br>
+      created_at, updated_at
+    </div>
+  </div>
+
+  <div style="font-size:24px;color:#555;align-self:center">→</div>
+
+  <!-- app -->
+  <div style="background:#0d2137;border:1px solid #4a90d9;border-radius:8px;padding:12px;min-width:200px">
+    <div style="color:#64b5f6;font-weight:700;font-size:13px;margin-bottom:8px">app 应用</div>
+    <div style="font-size:11px;line-height:2;font-family:monospace;color:#ccc">
+      <span style="color:#ffcc02">id</span> bigint PK<br>
+      app_id varchar <span style="color:#555">UNIQUE</span><br>
+      <span style="color:#ef9a9a">merchant_id</span> bigint FK<br>
+      name varchar<br>
+      live_key varchar <span style="color:#555">加密</span><br>
+      test_key varchar <span style="color:#555">加密</span><br>
+      status tinyint<br>
+      created_at, updated_at
+    </div>
+  </div>
+
+  <div style="font-size:24px;color:#555;align-self:center">→</div>
+
+  <!-- channel_config -->
+  <div style="background:#0d2137;border:1px solid #4a90d9;border-radius:8px;padding:12px;min-width:210px">
+    <div style="color:#64b5f6;font-weight:700;font-size:13px;margin-bottom:8px">channel_config 渠道配置</div>
+    <div style="font-size:11px;line-height:2;font-family:monospace;color:#ccc">
+      <span style="color:#ffcc02">id</span> bigint PK<br>
+      <span style="color:#ef9a9a">app_id</span> bigint FK<br>
+      channel varchar <span style="color:#555">枚举</span><br>
+      config_json text <span style="color:#555">AES加密</span><br>
+      <span style="color:#546e7a;font-size:10px">存 mch_id/appid/key/cert</span><br>
+      status tinyint<br>
+      created_at, updated_at
+    </div>
+  </div>
+
+  <div style="font-size:24px;color:#555;align-self:center">＋</div>
+
+  <!-- operator -->
+  <div style="background:#1a1000;border:1px solid #ffb74d;border-radius:8px;padding:12px;min-width:190px">
+    <div style="color:#ffb74d;font-weight:700;font-size:13px;margin-bottom:8px">operator 操作员</div>
+    <div style="font-size:11px;line-height:2;font-family:monospace;color:#ccc">
+      <span style="color:#ffcc02">id</span> bigint PK<br>
+      <span style="color:#ef9a9a">merchant_id</span> bigint FK<br>
+      username varchar <span style="color:#555">UNIQUE</span><br>
+      password_hash varchar<br>
+      real_name varchar<br>
+      is_admin boolean<br>
+      status tinyint<br>
+      created_at, updated_at
+    </div>
+  </div>
+
+  <div style="font-size:24px;color:#555;align-self:center">→</div>
+
+  <!-- operator_permission -->
+  <div style="background:#1a1000;border:1px solid #ffb74d;border-radius:8px;padding:12px;min-width:190px">
+    <div style="color:#ffb74d;font-weight:700;font-size:13px;margin-bottom:8px">operator_permission 权限</div>
+    <div style="font-size:11px;line-height:2;font-family:monospace;color:#ccc">
+      <span style="color:#ffcc02">id</span> bigint PK<br>
+      <span style="color:#ef9a9a">operator_id</span> bigint FK<br>
+      module varchar<br>
+      <span style="color:#546e7a;font-size:10px">orders/refunds/channels</span><br>
+      <span style="color:#546e7a;font-size:10px">reconcile/apps/operators</span><br>
+      can_view boolean<br>
+      can_operate boolean
+    </div>
+  </div>
+
+</div>
+
+<!-- Divider -->
+<div style="margin:12px 0 6px;font-size:11px;color:#81c784;letter-spacing:1px;padding-left:4px">▌ 交易流水</div>
+
+<div style="display:flex;gap:10px;margin-bottom:4px;align-items:flex-start">
+
+  <!-- charge -->
+  <div style="background:#0d1f0d;border:1px solid #81c784;border-radius:8px;padding:12px;min-width:250px">
+    <div style="color:#81c784;font-weight:700;font-size:13px;margin-bottom:8px">charge 支付订单</div>
+    <div style="font-size:11px;line-height:2;font-family:monospace;color:#ccc">
+      <span style="color:#ffcc02">id</span> bigint PK<br>
+      charge_id varchar <span style="color:#555">ch_xxx UNIQUE</span><br>
+      <span style="color:#ef9a9a">app_id</span> bigint FK<br>
+      merchant_id bigint<br>
+      out_trade_no varchar <span style="color:#555">商户单号</span><br>
+      channel varchar <span style="color:#555">枚举</span><br>
+      amount int <span style="color:#555">分</span><br>
+      subject, body varchar<br>
+      status varchar <span style="color:#555">状态机</span><br>
+      paid boolean · paid_at datetime<br>
+      time_expire datetime<br>
+      transaction_no varchar <span style="color:#555">渠道单号</span><br>
+      channel_extra json <span style="color:#555">openid等</span><br>
+      credential json <span style="color:#555">支付凭证</span><br>
+      amount_refunded int<br>
+      metadata json<br>
+      created_at, updated_at
+    </div>
+  </div>
+
+  <div style="font-size:24px;color:#555;align-self:center">→</div>
+
+  <!-- refund -->
+  <div style="background:#0d1f0d;border:1px solid #81c784;border-radius:8px;padding:12px;min-width:220px">
+    <div style="color:#81c784;font-weight:700;font-size:13px;margin-bottom:8px">refund 退款单</div>
+    <div style="font-size:11px;line-height:2;font-family:monospace;color:#ccc">
+      <span style="color:#ffcc02">id</span> bigint PK<br>
+      refund_id varchar <span style="color:#555">re_xxx UNIQUE</span><br>
+      <span style="color:#ef9a9a">charge_id</span> varchar FK<br>
+      app_id, merchant_id bigint<br>
+      out_refund_no varchar<br>
+      amount int <span style="color:#555">分</span><br>
+      description varchar<br>
+      status varchar<br>
+      transaction_no varchar<br>
+      failure_code, failure_msg<br>
+      succeed_at datetime<br>
+      created_at, updated_at
+    </div>
+  </div>
+
+  <div style="font-size:24px;color:#555;align-self:center">＋</div>
+
+  <!-- notify_record -->
+  <div style="background:#0d1f0d;border:1px solid #81c784;border-radius:8px;padding:12px;min-width:200px">
+    <div style="color:#81c784;font-weight:700;font-size:13px;margin-bottom:8px">notify_record 回调幂等</div>
+    <div style="font-size:11px;line-height:2;font-family:monospace;color:#ccc">
+      <span style="color:#ffcc02">id</span> bigint PK<br>
+      notify_key varchar <span style="color:#555">UNIQUE</span><br>
+      <span style="color:#546e7a;font-size:10px">channel+transaction_no</span><br>
+      charge_id varchar<br>
+      channel varchar<br>
+      raw_body text<br>
+      status varchar<br>
+      process_count int<br>
+      created_at, updated_at
+    </div>
+  </div>
+
+  <div style="font-size:24px;color:#555;align-self:center">＋</div>
+
+  <!-- reconcile_record -->
+  <div style="background:#12001f;border:1px solid #ce93d8;border-radius:8px;padding:12px;min-width:200px">
+    <div style="color:#ce93d8;font-weight:700;font-size:13px;margin-bottom:8px">reconcile_record 对账</div>
+    <div style="font-size:11px;line-height:2;font-family:monospace;color:#ccc">
+      <span style="color:#ffcc02">id</span> bigint PK<br>
+      <span style="color:#ef9a9a">app_id</span> bigint FK<br>
+      merchant_id bigint<br>
+      channel varchar<br>
+      reconcile_date date<br>
+      status varchar<br>
+      total_count, total_amount<br>
+      matched_count int<br>
+      unmatched_count int<br>
+      created_at, updated_at
+    </div>
+  </div>
+
+</div>
+
+<!-- Status machine note -->
+<div style="margin-top:12px;padding:12px;background:rgba(129,199,132,0.06);border:1px solid #2e4a2e;border-radius:6px;font-size:12px">
+  <strong style="color:#81c784">charge 订单状态机：</strong>
+  <span style="font-family:monospace;color:#ccc">
+    CREATED &nbsp;→&nbsp; <span style="color:#ffb74d">PENDING</span> &nbsp;→&nbsp; <span style="color:#81c784">PAID</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ (超时)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ (全额退款)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ef9a9a">EXPIRED</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ce93d8">REFUNDED</span>
+  </span>
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  <strong style="color:#81c784">渠道枚举：</strong>
+  <span style="font-family:monospace;color:#ccc">wechat_jsapi · wechat_h5 · alipay_wap</span>
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  <strong style="color:#81c784">权限模块：</strong>
+  <span style="font-family:monospace;color:#ccc">orders · refunds · channels · reconcile · apps · operators</span>
+</div>
+
+</div>
+</div>

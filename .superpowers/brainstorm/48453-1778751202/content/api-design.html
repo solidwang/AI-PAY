@@ -1,0 +1,219 @@
+<h2>API 设计</h2>
+<p class="subtitle">两套 API：商户端（API Key 认证）+ 管理后台（JWT 认证）</p>
+
+<div style="display:flex;gap:16px;flex-wrap:wrap">
+
+<!-- Left: Merchant API -->
+<div style="flex:1;min-width:380px">
+  <div style="color:#64b5f6;font-size:12px;letter-spacing:1px;margin-bottom:8px">▌ pay-api &nbsp;·&nbsp; 商户端 REST API</div>
+  <div style="background:#0a1929;border:1px solid #1e3a5f;border-radius:6px;padding:10px;margin-bottom:8px;font-size:12px">
+    <span style="color:#ffb74d">认证：</span>
+    <span style="font-family:monospace;color:#ccc">Authorization: Basic base64(sk_live_xxx:)</span>
+    <div style="color:#546e7a;margin-top:2px">API Key 作为用户名，密码留空，标准 HTTP Basic Auth</div>
+  </div>
+
+  <!-- Charges group -->
+  <div style="margin-bottom:10px">
+    <div style="color:#81c784;font-size:11px;margin-bottom:6px;letter-spacing:1px">CHARGES 支付订单</div>
+    <div style="background:#0a1929;border-radius:6px;overflow:hidden">
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1565c0;color:#90caf9;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">POST</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/v1/charges</span>
+        <span style="color:#546e7a;margin-left:auto;font-size:11px">创建支付订单</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1b5e20;color:#a5d6a7;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">GET</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/v1/charges/:id</span>
+        <span style="color:#546e7a;margin-left:auto;font-size:11px">查询订单</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px">
+        <span style="background:#1b5e20;color:#a5d6a7;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">GET</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/v1/charges</span>
+        <span style="color:#546e7a;margin-left:auto;font-size:11px">订单列表（分页）</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Refunds group -->
+  <div style="margin-bottom:10px">
+    <div style="color:#81c784;font-size:11px;margin-bottom:6px;letter-spacing:1px">REFUNDS 退款</div>
+    <div style="background:#0a1929;border-radius:6px;overflow:hidden">
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1565c0;color:#90caf9;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">POST</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/v1/charges/:id/refunds</span>
+        <span style="color:#546e7a;margin-left:auto;font-size:11px">发起退款</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1b5e20;color:#a5d6a7;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">GET</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/v1/charges/:id/refunds</span>
+        <span style="color:#546e7a;margin-left:auto;font-size:11px">退款列表</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px">
+        <span style="background:#1b5e20;color:#a5d6a7;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">GET</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/v1/refunds/:id</span>
+        <span style="color:#546e7a;margin-left:auto;font-size:11px">查询退款详情</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notify group -->
+  <div style="margin-bottom:10px">
+    <div style="color:#81c784;font-size:11px;margin-bottom:6px;letter-spacing:1px">NOTIFY 渠道回调（无需认证）</div>
+    <div style="background:#0a1929;border-radius:6px;overflow:hidden">
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1565c0;color:#90caf9;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">POST</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/v1/notify/wechat/:appId</span>
+        <span style="color:#546e7a;margin-left:auto;font-size:11px">微信异步通知</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px">
+        <span style="background:#1565c0;color:#90caf9;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">POST</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/v1/notify/alipay/:appId</span>
+        <span style="color:#546e7a;margin-left:auto;font-size:11px">支付宝异步通知</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key request/response -->
+  <div style="margin-bottom:6px">
+    <div style="color:#81c784;font-size:11px;margin-bottom:6px;letter-spacing:1px">POST /v1/charges 请求示例</div>
+    <pre style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px;padding:10px;font-size:11px;color:#ccc;overflow-x:auto;margin:0">{
+  "order_no": "ORDER_20240515_001",
+  "channel": "wechat_jsapi",
+  "amount": 9900,
+  "currency": "cny",
+  "subject": "商品名称",
+  "body": "商品描述",
+  "client_ip": "192.168.1.1",
+  "time_expire": 1800,
+  "channel_extra": { "open_id": "oUpF8xxx" },
+  "metadata": { "user_id": "U123" }
+}</pre>
+  </div>
+  <div>
+    <div style="color:#81c784;font-size:11px;margin-bottom:6px;letter-spacing:1px">响应（返回支付凭证）</div>
+    <pre style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px;padding:10px;font-size:11px;color:#ccc;overflow-x:auto;margin:0">{
+  "id": "ch_abcdef123456",
+  "object": "charge",
+  "status": "pending",
+  "paid": false,
+  "amount": 9900,
+  "credential": {
+    "wechat_jsapi": {
+      "appId": "wxabc",
+      "timeStamp": "1715700000",
+      "nonceStr": "xxx",
+      "package": "prepay_id=wx...",
+      "signType": "RSA",
+      "paySign": "xxx"
+    }
+  }
+}</pre>
+  </div>
+</div>
+
+<!-- Right: Admin API -->
+<div style="flex:1;min-width:340px">
+  <div style="color:#ffb74d;font-size:12px;letter-spacing:1px;margin-bottom:8px">▌ pay-admin-api &nbsp;·&nbsp; 管理后台 API</div>
+  <div style="background:#0a1929;border:1px solid #2a1a00;border-radius:6px;padding:10px;margin-bottom:8px;font-size:12px">
+    <span style="color:#ffb74d">认证：</span>
+    <span style="font-family:monospace;color:#ccc">Authorization: Bearer &lt;JWT&gt;</span>
+    <div style="color:#546e7a;margin-top:2px">操作员登录后获取 JWT，有效期 8h，刷新 Token 有效期 7d</div>
+  </div>
+
+  <!-- Auth -->
+  <div style="margin-bottom:10px">
+    <div style="color:#ffb74d;font-size:11px;margin-bottom:6px;letter-spacing:1px">AUTH 认证</div>
+    <div style="background:#0a1929;border-radius:6px;overflow:hidden">
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1565c0;color:#90caf9;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">POST</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/auth/login</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px">
+        <span style="background:#1565c0;color:#90caf9;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">POST</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/auth/refresh</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Merchants & Apps -->
+  <div style="margin-bottom:10px">
+    <div style="color:#ffb74d;font-size:11px;margin-bottom:6px;letter-spacing:1px">MERCHANTS / APPS / CHANNELS</div>
+    <div style="background:#0a1929;border-radius:6px;overflow:hidden">
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1b5e20;color:#a5d6a7;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">GET</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/merchants</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1565c0;color:#90caf9;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">POST</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/merchants</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1b5e20;color:#a5d6a7;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">GET</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/merchants/:id/apps</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1565c0;color:#90caf9;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">POST</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/merchants/:id/apps</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1b5e20;color:#a5d6a7;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">GET</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/apps/:id/channels</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px">
+        <span style="background:#e65100;color:#ffcc80;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">PUT</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/apps/:id/channels/:ch</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders & Refunds -->
+  <div style="margin-bottom:10px">
+    <div style="color:#ffb74d;font-size:11px;margin-bottom:6px;letter-spacing:1px">ORDERS / REFUNDS / RECONCILE</div>
+    <div style="background:#0a1929;border-radius:6px;overflow:hidden">
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1b5e20;color:#a5d6a7;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">GET</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/charges</span>
+        <span style="color:#546e7a;margin-left:auto;font-size:11px">含筛选/分页</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1b5e20;color:#a5d6a7;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">GET</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/refunds</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1b5e20;color:#a5d6a7;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">GET</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/reconcile</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px">
+        <span style="background:#1565c0;color:#90caf9;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">POST</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/reconcile/trigger</span>
+        <span style="color:#546e7a;margin-left:auto;font-size:11px">手动触发</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Operators -->
+  <div>
+    <div style="color:#ffb74d;font-size:11px;margin-bottom:6px;letter-spacing:1px">OPERATORS 操作员管理</div>
+    <div style="background:#0a1929;border-radius:6px;overflow:hidden">
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1b5e20;color:#a5d6a7;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">GET</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/operators</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a1a">
+        <span style="background:#1565c0;color:#90caf9;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">POST</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/operators</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:8px 12px">
+        <span style="background:#e65100;color:#ffcc80;padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;min-width:36px;text-align:center">PUT</span>
+        <span style="font-family:monospace;color:#e0e0e0;margin-left:10px">/admin/v1/operators/:id/permissions</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div style="margin-top:14px;padding:12px;background:rgba(100,181,246,0.06);border-left:3px solid #64b5f6;border-radius:4px;font-size:12px">
+  <strong>OpenSpec 文档</strong>：所有端点通过 <code>springdoc-openapi</code> 自动生成，暴露在 <code>/v3/api-docs</code>，Swagger UI 在 <code>/swagger-ui.html</code>。
+  生产环境通过配置关闭 Swagger UI 访问。
+</div>

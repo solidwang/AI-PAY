@@ -1,0 +1,133 @@
+<h2>Pay-Core 系统架构总览</h2>
+<p class="subtitle">多模块 Maven + Spring Boot，单 JAR 部署</p>
+
+<div style="overflow-x:auto">
+<div style="min-width:700px;padding:10px">
+
+<!-- Top: Clients -->
+<div style="display:flex;gap:12px;margin-bottom:8px;justify-content:center">
+  <div style="background:#1e3a5f;border:1px solid #4a90d9;border-radius:8px;padding:10px 18px;text-align:center;min-width:140px">
+    <div style="font-size:11px;color:#90caf9;letter-spacing:1px">CLIENT</div>
+    <div style="font-weight:600;margin-top:4px">商户服务端</div>
+    <div style="font-size:11px;color:#888;margin-top:2px">REST API 调用</div>
+  </div>
+  <div style="background:#1e3a5f;border:1px solid #4a90d9;border-radius:8px;padding:10px 18px;text-align:center;min-width:140px">
+    <div style="font-size:11px;color:#90caf9;letter-spacing:1px">CLIENT</div>
+    <div style="font-weight:600;margin-top:4px">管理后台</div>
+    <div style="font-size:11px;color:#888;margin-top:2px">React + Ant Design</div>
+  </div>
+  <div style="background:#1e3a5f;border:1px solid #4a90d9;border-radius:8px;padding:10px 18px;text-align:center;min-width:140px">
+    <div style="font-size:11px;color:#90caf9;letter-spacing:1px">CLIENT</div>
+    <div style="font-weight:600;margin-top:4px">H5 收银台</div>
+    <div style="font-size:11px;color:#888;margin-top:2px">Mobile Browser</div>
+  </div>
+</div>
+
+<!-- Arrow -->
+<div style="text-align:center;color:#555;font-size:18px;margin:4px 0">↓</div>
+
+<!-- API Gateway Layer -->
+<div style="background:#0d2137;border:2px solid #64b5f6;border-radius:10px;padding:14px;margin-bottom:8px">
+  <div style="font-size:11px;color:#64b5f6;letter-spacing:1px;margin-bottom:8px">pay-api &nbsp;|&nbsp; pay-admin-api &nbsp;·&nbsp; Spring Boot Entry + OpenSpec</div>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <div style="background:#0a1929;border:1px solid #37474f;border-radius:6px;padding:8px 14px;font-size:13px">
+      <span style="color:#4fc3f7">POST</span> /v1/charges &nbsp;<span style="color:#555">统一下单</span>
+    </div>
+    <div style="background:#0a1929;border:1px solid #37474f;border-radius:6px;padding:8px 14px;font-size:13px">
+      <span style="color:#4fc3f7">POST</span> /v1/refunds &nbsp;<span style="color:#555">发起退款</span>
+    </div>
+    <div style="background:#0a1929;border:1px solid #37474f;border-radius:6px;padding:8px 14px;font-size:13px">
+      <span style="color:#4fc3f7">GET</span> &nbsp;/v1/charges/:id &nbsp;<span style="color:#555">查询订单</span>
+    </div>
+    <div style="background:#0a1929;border:1px solid #37474f;border-radius:6px;padding:8px 14px;font-size:13px">
+      <span style="color:#81c784">POST</span> /notify/* &nbsp;<span style="color:#555">渠道回调</span>
+    </div>
+  </div>
+  <div style="margin-top:8px;font-size:12px;color:#546e7a;text-align:center">
+    🔐 API Key 认证（sk_live_xxx / sk_test_xxx）· HTTP Basic Auth
+  </div>
+</div>
+
+<!-- Arrow -->
+<div style="text-align:center;color:#555;font-size:18px;margin:4px 0">↓</div>
+
+<!-- Core Business Layer -->
+<div style="background:#0d1f0d;border:2px solid #81c784;border-radius:10px;padding:14px;margin-bottom:8px">
+  <div style="font-size:11px;color:#81c784;letter-spacing:1px;margin-bottom:8px">pay-core &nbsp;·&nbsp; 核心业务逻辑</div>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <div style="background:#0a1929;border:1px solid #37474f;border-radius:6px;padding:8px 14px;font-size:13px;text-align:center">
+      <div style="color:#a5d6a7">OrderService</div>
+      <div style="font-size:11px;color:#555;margin-top:2px">订单状态机</div>
+    </div>
+    <div style="background:#0a1929;border:1px solid #37474f;border-radius:6px;padding:8px 14px;font-size:13px;text-align:center">
+      <div style="color:#a5d6a7">RefundService</div>
+      <div style="font-size:11px;color:#555;margin-top:2px">退款流程</div>
+    </div>
+    <div style="background:#0a1929;border:1px solid #37474f;border-radius:6px;padding:8px 14px;font-size:13px;text-align:center">
+      <div style="color:#a5d6a7">MerchantService</div>
+      <div style="font-size:11px;color:#555;margin-top:2px">商户/App管理</div>
+    </div>
+    <div style="background:#0a1929;border:1px solid #37474f;border-radius:6px;padding:8px 14px;font-size:13px;text-align:center">
+      <div style="color:#a5d6a7">NotifyService</div>
+      <div style="font-size:11px;color:#555;margin-top:2px">回调+幂等</div>
+    </div>
+    <div style="background:#0a1929;border:1px solid #37474f;border-radius:6px;padding:8px 14px;font-size:13px;text-align:center">
+      <div style="color:#a5d6a7">ReconcileService</div>
+      <div style="font-size:11px;color:#555;margin-top:2px">对账</div>
+    </div>
+  </div>
+</div>
+
+<!-- Arrow -->
+<div style="text-align:center;color:#555;font-size:18px;margin:4px 0">↓</div>
+
+<!-- Channel Layer -->
+<div style="background:#1a1000;border:2px solid #ffb74d;border-radius:10px;padding:14px;margin-bottom:8px">
+  <div style="font-size:11px;color:#ffb74d;letter-spacing:1px;margin-bottom:8px">pay-channel &nbsp;·&nbsp; 渠道抽象 + 适配器（可插拔）</div>
+  <div style="display:flex;gap:16px;justify-content:center">
+    <div style="background:#0a1929;border:1px solid #37474f;border-radius:8px;padding:12px 20px;text-align:center;min-width:160px">
+      <div style="color:#4caf50;font-size:20px">微信支付</div>
+      <div style="font-size:12px;color:#888;margin-top:4px">WechatPayAdapter</div>
+      <div style="font-size:11px;color:#546e7a;margin-top:4px">JSAPI · H5</div>
+    </div>
+    <div style="background:#0a1929;border:1px solid #37474f;border-radius:8px;padding:12px 20px;text-align:center;min-width:160px">
+      <div style="color:#1677ff;font-size:20px">支付宝</div>
+      <div style="font-size:12px;color:#888;margin-top:4px">AlipayAdapter</div>
+      <div style="font-size:11px;color:#546e7a;margin-top:4px">手机网站支付</div>
+    </div>
+    <div style="background:#0a1929;border:1px dashed #37474f;border-radius:8px;padding:12px 20px;text-align:center;min-width:100px;opacity:0.5">
+      <div style="color:#888;font-size:16px">+ 新渠道</div>
+      <div style="font-size:11px;color:#555;margin-top:4px">后续扩展</div>
+    </div>
+  </div>
+</div>
+
+<!-- Arrow -->
+<div style="text-align:center;color:#555;font-size:18px;margin:4px 0">↓</div>
+
+<!-- Infrastructure -->
+<div style="display:flex;gap:12px;justify-content:center">
+  <div style="background:#12001f;border:1px solid #ce93d8;border-radius:8px;padding:10px 18px;text-align:center;min-width:130px">
+    <div style="font-size:11px;color:#ce93d8">STORAGE</div>
+    <div style="font-weight:600;margin-top:4px">MySQL 8</div>
+    <div style="font-size:11px;color:#888">MyBatis-Plus</div>
+  </div>
+  <div style="background:#12001f;border:1px solid #ce93d8;border-radius:8px;padding:10px 18px;text-align:center;min-width:130px">
+    <div style="font-size:11px;color:#ce93d8">CACHE / LOCK</div>
+    <div style="font-weight:600;margin-top:4px">Redis</div>
+    <div style="font-size:11px;color:#888">幂等 · 限流</div>
+  </div>
+  <div style="background:#12001f;border:1px solid #ce93d8;border-radius:8px;padding:10px 18px;text-align:center;min-width:130px">
+    <div style="font-size:11px;color:#ce93d8">EXTERNAL</div>
+    <div style="font-weight:600;margin-top:4px">微信 / 支付宝</div>
+    <div style="font-size:11px;color:#888">开放平台 API</div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<div style="margin-top:16px;padding:12px;background:rgba(129,199,132,0.08);border-left:3px solid #81c784;border-radius:4px;font-size:13px">
+  <strong>6 个 Maven 模块</strong>：pay-common · pay-core · pay-channel · pay-api · pay-admin-api · pay-bootstrap<br>
+  <span style="color:#888">单一 JAR 打包部署，渠道层可独立扩展，不影响核心业务代码</span>
+</div>

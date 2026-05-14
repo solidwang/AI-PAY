@@ -1,0 +1,156 @@
+<h2>支付核心流程</h2>
+<p class="subtitle">三条关键链路：下单 → 支付 → 回调处理</p>
+
+<div style="display:flex;gap:20px;flex-wrap:wrap">
+
+<!-- Flow 1: Create Charge -->
+<div style="flex:1;min-width:320px">
+  <div style="color:#64b5f6;font-size:12px;letter-spacing:1px;margin-bottom:10px">▌ 链路 1：统一下单（POST /v1/charges）</div>
+
+  <!-- Participants -->
+  <div style="display:flex;gap:0;margin-bottom:4px">
+    <div style="flex:1;text-align:center;background:#1a2a3a;border:1px solid #37474f;border-radius:4px 0 0 4px;padding:6px 4px;font-size:11px;color:#90caf9">商户服务端</div>
+    <div style="flex:1;text-align:center;background:#0d2137;border:1px solid #37474f;padding:6px 4px;font-size:11px;color:#81c784">pay-api</div>
+    <div style="flex:1;text-align:center;background:#1a1000;border:1px solid #37474f;padding:6px 4px;font-size:11px;color:#ffb74d">pay-channel</div>
+    <div style="flex:1;text-align:center;background:#12001f;border:1px solid #37474f;border-radius:0 4px 4px 0;padding:6px 4px;font-size:11px;color:#ce93d8">微信/支付宝</div>
+  </div>
+
+  <div style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px;padding:12px;font-size:11px;line-height:2.2">
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="color:#90caf9;min-width:80px">商户服务端</span>
+      <span style="color:#555;flex:1;border-top:1px dashed #333;position:relative">
+        <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#0a0a0a;padding:0 4px;color:#ccc;white-space:nowrap">POST /v1/charges (API Key)</span>
+      </span>
+      <span style="color:#81c784;min-width:50px;text-align:right">pay-api</span>
+    </div>
+    <div style="color:#546e7a;font-size:10px;padding:2px 0 4px 86px">① 验证 API Key → 解析 App → 验证渠道配置</div>
+
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="color:#81c784;min-width:80px">pay-core</span>
+      <span style="color:#555;flex:1;border-top:1px dashed #333;position:relative">
+        <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#0a0a0a;padding:0 4px;color:#ccc;white-space:nowrap">createCharge()</span>
+      </span>
+      <span style="color:#ffb74d;min-width:50px;text-align:right">channel</span>
+    </div>
+    <div style="color:#546e7a;font-size:10px;padding:2px 0 4px 86px">② 生成 charge_id(ch_xxx)，写库 status=CREATED</div>
+
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="color:#ffb74d;min-width:80px">pay-channel</span>
+      <span style="color:#555;flex:1;border-top:1px dashed #333;position:relative">
+        <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#0a0a0a;padding:0 4px;color:#ccc;white-space:nowrap">统一下单 API</span>
+      </span>
+      <span style="color:#ce93d8;min-width:50px;text-align:right">渠道</span>
+    </div>
+    <div style="color:#546e7a;font-size:10px;padding:2px 0 4px 86px">③ 调微信 /v3/pay/transactions 或支付宝 alipay.trade.wap.pay</div>
+
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="color:#ce93d8;min-width:80px">渠道返回</span>
+      <span style="color:#555;flex:1;border-top:1px dashed #555;position:relative">
+        <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#0a0a0a;padding:0 4px;color:#4fc3f7;white-space:nowrap">prepay_id / trade_no</span>
+      </span>
+      <span style="color:#ffb74d;min-width:50px;text-align:right">channel</span>
+    </div>
+    <div style="color:#546e7a;font-size:10px;padding:2px 0 4px 86px">④ 组装 credential（JSAPI签名 / H5 url / 支付宝跳转链接）</div>
+
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="color:#81c784;min-width:80px">pay-api</span>
+      <span style="color:#555;flex:1;border-top:1px dashed #555;position:relative">
+        <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#0a0a0a;padding:0 4px;color:#4fc3f7;white-space:nowrap">charge 对象 + credential</span>
+      </span>
+      <span style="color:#90caf9;min-width:50px;text-align:right">商户端</span>
+    </div>
+    <div style="color:#546e7a;font-size:10px;padding:2px 0 4px 86px">⑤ 更新 status=PENDING，返回完整 charge 对象</div>
+  </div>
+</div>
+
+<!-- Flow 2: Callback -->
+<div style="flex:1;min-width:320px">
+  <div style="color:#81c784;font-size:12px;letter-spacing:1px;margin-bottom:10px">▌ 链路 2：异步回调处理（POST /v1/notify/*）</div>
+
+  <div style="display:flex;gap:0;margin-bottom:4px">
+    <div style="flex:1;text-align:center;background:#12001f;border:1px solid #37474f;border-radius:4px 0 0 4px;padding:6px 4px;font-size:11px;color:#ce93d8">微信/支付宝</div>
+    <div style="flex:1;text-align:center;background:#0d2137;border:1px solid #37474f;padding:6px 4px;font-size:11px;color:#81c784">NotifyController</div>
+    <div style="flex:1;text-align:center;background:#0d1f0d;border:1px solid #37474f;padding:6px 4px;font-size:11px;color:#a5d6a7">NotifyService</div>
+    <div style="flex:1;text-align:center;background:#1a1000;border:1px solid #37474f;border-radius:0 4px 4px 0;padding:6px 4px;font-size:11px;color:#ffb74d">Redis + DB</div>
+  </div>
+
+  <div style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px;padding:12px;font-size:11px;line-height:2.2">
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="color:#ce93d8;min-width:80px">渠道通知</span>
+      <span style="color:#555;flex:1;border-top:1px dashed #333;position:relative">
+        <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#0a0a0a;padding:0 4px;color:#ccc;white-space:nowrap">POST /notify/wechat/:appId</span>
+      </span>
+      <span style="color:#81c784;min-width:60px;text-align:right">Controller</span>
+    </div>
+    <div style="color:#546e7a;font-size:10px;padding:2px 0 4px 86px">① 验证渠道签名（微信V3 RSA / 支付宝 RSA2）</div>
+
+    <div style="background:#1a0a00;border:1px solid #5d4037;border-radius:4px;padding:8px;margin:6px 0;font-size:10px;color:#ffcc80">
+      <strong>幂等校验（Redis SETNX）</strong><br>
+      key = "notify:{channel}:{transaction_no}"<br>
+      SETNX 成功 → 继续处理 &nbsp;|&nbsp; 失败 → 直接返回成功（已处理）<br>
+      同时写 notify_record 表，status=processing
+    </div>
+
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="color:#a5d6a7;min-width:80px">NotifyService</span>
+      <span style="color:#555;flex:1;border-top:1px dashed #333;position:relative">
+        <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#0a0a0a;padding:0 4px;color:#ccc;white-space:nowrap">updateChargeStatus()</span>
+      </span>
+      <span style="color:#ffb74d;min-width:60px;text-align:right">DB</span>
+    </div>
+    <div style="color:#546e7a;font-size:10px;padding:2px 0 4px 86px">② 查 charge → 校验金额 → UPDATE status=PAID, paid=true, paid_at=now</div>
+
+    <div style="background:#0d1f0d;border:1px solid #2e4a2e;border-radius:4px;padding:8px;margin:6px 0;font-size:10px;color:#a5d6a7">
+      <strong>幂等收尾</strong>：更新 notify_record.status=success，释放 Redis key<br>
+      <strong>异常处理</strong>：任意步骤抛异常 → status=failed，返回 FAIL，渠道会重试（最多3次）
+    </div>
+
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="color:#81c784;min-width:80px">Controller</span>
+      <span style="color:#555;flex:1;border-top:1px dashed #555;position:relative">
+        <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#0a0a0a;padding:0 4px;color:#4fc3f7;white-space:nowrap">返回 SUCCESS</span>
+      </span>
+      <span style="color:#ce93d8;min-width:60px;text-align:right">渠道</span>
+    </div>
+    <div style="color:#546e7a;font-size:10px;padding:2px 0 4px 86px">③ 微信返回 {code:"SUCCESS"} / 支付宝返回 "success"</div>
+  </div>
+</div>
+
+</div>
+
+<!-- Flow 3: Refund -->
+<div style="margin-top:14px">
+  <div style="color:#ce93d8;font-size:12px;letter-spacing:1px;margin-bottom:8px">▌ 链路 3：退款（POST /v1/charges/:id/refunds）</div>
+  <div style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px;padding:12px;font-size:11px;color:#ccc;display:flex;gap:20px;flex-wrap:wrap">
+    <div style="flex:1;min-width:280px">
+      <div style="color:#ce93d8;margin-bottom:6px;font-size:12px">前置校验</div>
+      <div style="line-height:2">
+        ① 验证 charge 存在且 paid=true<br>
+        ② 累计退款金额 + 本次退款 ≤ 原订单金额<br>
+        ③ 生成 refund_id（re_xxx），写库 status=PENDING<br>
+        ④ 幂等 key = "refund:{refund_id}"
+      </div>
+    </div>
+    <div style="flex:1;min-width:280px">
+      <div style="color:#ce93d8;margin-bottom:6px;font-size:12px">渠道退款</div>
+      <div style="line-height:2">
+        ⑤ 调用 channel.refund() → 微信退款 API / 支付宝退款 API<br>
+        ⑥ 渠道同步返回成功 → 更新 status=SUCCESS<br>
+        ⑦ 更新 charge.amount_refunded += refund.amount<br>
+        ⑧ 若 amount_refunded = charge.amount → charge.status=REFUNDED
+      </div>
+    </div>
+    <div style="flex:1;min-width:200px">
+      <div style="color:#ce93d8;margin-bottom:6px;font-size:12px">注意事项</div>
+      <div style="line-height:2;color:#888">
+        微信退款为异步，需监听退款回调<br>
+        支付宝退款为同步，直接更新状态<br>
+        失败时保留 failure_code + msg
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:12px;padding:10px;background:rgba(206,147,216,0.06);border-left:3px solid #ce93d8;border-radius:4px;font-size:12px">
+  <strong>渠道抽象接口</strong>：<code>PayChannel</code> 接口定义 <code>createOrder()</code>、<code>parseNotify()</code>、<code>refund()</code>、<code>query()</code> 四个方法，微信和支付宝各自实现，核心业务代码零渠道感知。
+</div>
