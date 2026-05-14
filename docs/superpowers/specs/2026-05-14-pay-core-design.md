@@ -17,10 +17,10 @@ Pay-Core 是整个 AI-PAY 系统的基础服务，提供：
 - OpenSpec 文档（springdoc-openapi 自动生成）
 
 **支持渠道（初始版本）：**
-- 微信支付：JSAPI（公众号）、H5（手机浏览器）
+- 微信支付：JSAPI（公众号）、H5（手机浏览器）、Native（扫码）、小程序支付
 - 支付宝：手机网站支付（alipay.trade.wap.pay）
 
-后续可扩展：微信 Native、小程序支付、支付宝 PC 支付等。
+后续可扩展：支付宝 PC 支付、App 支付、银联等。
 
 ---
 
@@ -97,7 +97,7 @@ CREATE TABLE app (
 CREATE TABLE channel_config (
   id          BIGINT AUTO_INCREMENT PRIMARY KEY,
   app_id      BIGINT NOT NULL,
-  channel     VARCHAR(32) NOT NULL COMMENT 'wechat_jsapi|wechat_h5|alipay_wap',
+  channel     VARCHAR(32) NOT NULL COMMENT 'wechat_jsapi|wechat_h5|wechat_native|wechat_miniprogram|alipay_wap',
   config_json TEXT NOT NULL COMMENT 'AES-256-GCM 加密，存 mch_id/appid/key/cert 等',
   status      TINYINT NOT NULL DEFAULT 1,
   created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -146,7 +146,7 @@ CREATE TABLE charge (
   app_id           BIGINT NOT NULL,
   merchant_id      BIGINT NOT NULL,
   out_trade_no     VARCHAR(64) NOT NULL COMMENT '商户系统订单号',
-  channel          VARCHAR(32) NOT NULL,
+  channel          VARCHAR(32) NOT NULL COMMENT 'wechat_jsapi|wechat_h5|wechat_native|wechat_miniprogram|alipay_wap',
   amount           INT NOT NULL COMMENT '金额，单位：分',
   currency         VARCHAR(8) NOT NULL DEFAULT 'cny',
   subject          VARCHAR(256) NOT NULL,
@@ -275,6 +275,16 @@ CREATE TABLE reconcile_record (
 }
 ```
 
+`channel_extra` 各渠道必填字段：
+
+| channel | channel_extra 必填字段 |
+|---------|----------------------|
+| wechat_jsapi | `open_id`（公众号网页授权获取） |
+| wechat_h5 | 无必填，可选 `scene_info`（H5 场景信息） |
+| wechat_native | 无（后端直接获取 code_url） |
+| wechat_miniprogram | `open_id`（小程序 `wx.login` 换取） |
+| alipay_wap | `return_url`（支付完成同步跳转地址） |
+
 **响应（含支付凭证）：**
 ```json
 {
@@ -296,6 +306,16 @@ CREATE TABLE reconcile_record (
   }
 }
 ```
+
+各渠道 `credential` 返回格式：
+
+| channel | credential 内容 |
+|---------|----------------|
+| wechat_jsapi | `{ appId, timeStamp, nonceStr, package, signType, paySign }` — 直接传给 `wx.config` + `wx.chooseWXPay()` |
+| wechat_h5 | `{ h5_url }` — 前端直接跳转此 URL 唤起微信 |
+| wechat_native | `{ code_url }` — 前端用此 URL 渲染二维码（如 qrcode.js） |
+| wechat_miniprogram | `{ appId, timeStamp, nonceStr, package, signType, paySign }` — 直接传给小程序 `wx.requestPayment()` |
+| alipay_wap | `{ form }` — HTML form 字符串，前端 document.write 后自动提交跳转支付宝 |
 
 ### 4.2 管理后台 API（pay-admin-api）
 
@@ -336,8 +356,10 @@ CREATE TABLE reconcile_record (
 2. 验证 App 已配置目标渠道
 3. 生成 `charge_id`（`ch_` + UUID 去横线取前 24 位），写库 status=`created`
 4. 调用 `PayChannel.createOrder()`：
-   - wechat_jsapi → 微信 `/v3/pay/transactions/jsapi` → 获取 prepay_id → 组装 JSAPI 签名参数
-   - wechat_h5 → 微信 `/v3/pay/transactions/h5` → 获取 h5_url
+   - wechat_jsapi → 微信 `/v3/pay/transactions/jsapi`（传 openid）→ prepay_id → 组装 JSAPI 签名参数（appId/timeStamp/nonceStr/package/signType/paySign）
+   - wechat_h5 → 微信 `/v3/pay/transactions/h5` → h5_url（前端直接跳转唤起微信）
+   - wechat_native → 微信 `/v3/pay/transactions/native` → code_url（前端用此 URL 生成二维码展示）
+   - wechat_miniprogram → 微信 `/v3/pay/transactions/jsapi`（传小程序 appId + openid）→ prepay_id → 组装与 JSAPI 相同的签名参数（小程序调 `wx.requestPayment()` 使用）
    - alipay_wap → 支付宝 `alipay.trade.wap.pay` → 获取跳转 form
 5. 将凭证写入 `charge.credential`，更新 status=`pending`
 6. 返回完整 charge 对象
