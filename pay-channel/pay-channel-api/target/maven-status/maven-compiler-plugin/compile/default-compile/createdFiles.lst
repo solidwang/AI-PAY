@@ -1,0 +1,9 @@
+com/aipay/channel/api/model/CreateOrderRequest.class
+com/aipay/channel/api/model/RefundRequest.class
+com/aipay/channel/api/PayChannel.class
+com/aipay/channel/api/ChannelRouter.class
+com/aipay/channel/api/model/NotifyResult.class
+com/aipay/channel/api/model/RefundResult.class
+com/aipay/channel/api/model/NotifyRequest.class
+com/aipay/channel/api/model/CreateOrderResult.class
+com/aipay/channel/api/model/QueryResult.class

@@ -1,0 +1,9 @@
+/Users/solidwang/IdeaProjects/AI-PAY/pay-channel/pay-channel-api/src/main/java/com/aipay/channel/api/ChannelRouter.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-channel/pay-channel-api/src/main/java/com/aipay/channel/api/PayChannel.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-channel/pay-channel-api/src/main/java/com/aipay/channel/api/model/CreateOrderRequest.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-channel/pay-channel-api/src/main/java/com/aipay/channel/api/model/CreateOrderResult.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-channel/pay-channel-api/src/main/java/com/aipay/channel/api/model/NotifyRequest.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-channel/pay-channel-api/src/main/java/com/aipay/channel/api/model/NotifyResult.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-channel/pay-channel-api/src/main/java/com/aipay/channel/api/model/QueryResult.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-channel/pay-channel-api/src/main/java/com/aipay/channel/api/model/RefundRequest.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-channel/pay-channel-api/src/main/java/com/aipay/channel/api/model/RefundResult.java
