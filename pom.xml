@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.aipay</groupId>
+  <artifactId>ai-pay</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>pay-common</module>
+    <module>pay-core</module>
+    <module>pay-channel</module>
+    <module>pay-api</module>
+    <module>pay-admin-api</module>
+    <module>pay-bootstrap</module>
+  </modules>
+
+  <properties>
+    <java.version>21</java.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <spring.boot.version>3.3.5</spring.boot.version>
+    <mybatis.plus.version>3.5.9</mybatis.plus.version>
+    <springdoc.version>2.6.0</springdoc.version>
+    <wechatpay.java.version>0.2.12</wechatpay.java.version>
+    <alipay.sdk.version>4.38.204.ALL</alipay.sdk.version>
+    <redisson.version>3.37.0</redisson.version>
+    <jjwt.version>0.12.6</jjwt.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring.boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- Internal modules -->
+      <dependency><groupId>com.aipay</groupId><artifactId>pay-common</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>com.aipay</groupId><artifactId>pay-core</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>com.aipay</groupId><artifactId>pay-channel-api</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>com.aipay</groupId><artifactId>pay-channel-wechat</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>com.aipay</groupId><artifactId>pay-channel-alipay</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>com.aipay</groupId><artifactId>pay-api</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>com.aipay</groupId><artifactId>pay-admin-api</artifactId><version>${project.version}</version></dependency>
+
+      <!-- External libraries -->
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        <version>${mybatis.plus.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>${springdoc.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.wechatpay-apiv3</groupId>
+        <artifactId>wechatpay-java</artifactId>
+        <version>${wechatpay.java.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.alipay.sdk</groupId>
+        <artifactId>alipay-sdk-java</artifactId>
+        <version>${alipay.sdk.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.redisson</groupId>
+        <artifactId>redisson-spring-boot-starter</artifactId>
+        <version>${redisson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-api</artifactId>
+        <version>${jjwt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-impl</artifactId>
+        <version>${jjwt.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-jackson</artifactId>
+        <version>${jjwt.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${spring.boot.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
