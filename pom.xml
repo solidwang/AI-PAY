@@ -28,7 +28,7 @@
     <mybatis.plus.version>3.5.9</mybatis.plus.version>
     <springdoc.version>2.6.0</springdoc.version>
     <wechatpay.java.version>0.2.12</wechatpay.java.version>
-    <alipay.sdk.version>4.38.204.ALL</alipay.sdk.version>
+    <alipay.sdk.version>4.38.221.ALL</alipay.sdk.version>
     <redisson.version>3.37.0</redisson.version>
     <jjwt.version>0.12.6</jjwt.version>
   </properties>
