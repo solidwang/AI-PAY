@@ -12,8 +12,8 @@
 
   <modules>
     <module>pay-common</module>
-    <module>pay-core</module>
     <module>pay-channel</module>
+    <module>pay-core</module>
     <module>pay-api</module>
     <module>pay-admin-api</module>
     <module>pay-bootstrap</module>
