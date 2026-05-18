@@ -87,7 +87,14 @@ public class AlipayWapChannel implements PayChannel {
                     .build();
             }
 
-            int paidAmount = (int) (Double.parseDouble(params.get("total_amount")) * 100);
+            String totalAmountStr = params.get("total_amount");
+            if (totalAmountStr == null || totalAmountStr.isBlank()) {
+                return NotifyResult.builder()
+                    .success(false)
+                    .failureReason("Missing total_amount in notify params")
+                    .build();
+            }
+            int paidAmount = (int) Math.round(Double.parseDouble(totalAmountStr) * 100);
 
             return NotifyResult.builder()
                 .success(true)
@@ -144,6 +151,7 @@ public class AlipayWapChannel implements PayChannel {
 
     @Override
     public QueryResult query(String outTradeNo) {
+        log.warn("Alipay query not implemented for outTradeNo={}", outTradeNo);
         return QueryResult.builder().paid(false).build();
     }
 }
