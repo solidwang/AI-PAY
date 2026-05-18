@@ -29,6 +29,12 @@ public class RefundController {
             @PathVariable String chargeId,
             @RequestBody Map<String, Object> body) {
         Charge charge = chargeService.findByChargeId(chargeId);
+        if (charge == null) {
+            return ResponseEntity.status(404).body(Map.of("error", Map.of("code", "not_found", "message", "Charge not found")));
+        }
+        if (body.get("amount") == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", Map.of("code", "invalid_request", "message", "amount is required")));
+        }
         int amount = ((Number) body.get("amount")).intValue();
         String outRefundNo = (String) body.get("out_refund_no");
         String description = (String) body.get("description");

@@ -32,6 +32,9 @@ public class ChargeController {
             @RequestBody Map<String, Object> body) {
         String outTradeNo = (String) body.get("order_no");
         String channel = (String) body.get("channel");
+        if (body.get("amount") == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", Map.of("code", "invalid_request", "message", "amount is required")));
+        }
         int amount = ((Number) body.get("amount")).intValue();
         String currency = (String) body.getOrDefault("currency", "cny");
         String subject = (String) body.get("subject");
@@ -53,6 +56,9 @@ public class ChargeController {
             @AuthenticationPrincipal App app,
             @PathVariable String chargeId) {
         Charge charge = chargeService.findByChargeId(chargeId);
+        if (!app.getId().equals(charge.getAppId())) {
+            return ResponseEntity.status(403).body(Map.of("error", Map.of("code", "forbidden", "message", "Access denied")));
+        }
         return ResponseEntity.ok(toChargeResponse(charge));
     }
 

@@ -39,6 +39,9 @@ public class NotifyController {
         Map<String, String> headers = extractHeaders(request);
 
         App app = appService.findByAppId(appId);
+        if (app == null) {
+            return ResponseEntity.badRequest().body(Map.of("code", "FAIL", "message", "App not found"));
+        }
         String channelCode = channel != null ? channel : ChannelCode.WECHAT_JSAPI;
         ChannelConfig cfg = channelConfigService.findActiveConfig(app.getId(), channelCode);
         Map<String, Object> creds = channelConfigService.decryptConfig(cfg);
@@ -53,7 +56,7 @@ public class NotifyController {
         } catch (Exception e) {
             log.error("WeChat notify processing failed: {}", e.getMessage(), e);
             return ResponseEntity.status(500)
-                .body(Map.of("code", "FAIL", "message", e.getMessage()));
+                .body(Map.of("code", "FAIL", "message", "Notification processing failed"));
         }
     }
 
@@ -62,11 +65,14 @@ public class NotifyController {
             @PathVariable String appId,
             HttpServletRequest request) {
         App app = appService.findByAppId(appId);
+        if (app == null) {
+            return ResponseEntity.ok("fail");
+        }
         ChannelConfig cfg = channelConfigService.findActiveConfig(app.getId(), ChannelCode.ALIPAY_WAP);
         Map<String, Object> creds = channelConfigService.decryptConfig(cfg);
 
         String transactionNo = request.getParameter("trade_no");
-        String rawBody = request.getParameterMap().toString();
+        String rawBody = ""; // Alipay notify uses params map for signature verification, not raw body
         Map<String, String[]> params = request.getParameterMap();
 
         try {
