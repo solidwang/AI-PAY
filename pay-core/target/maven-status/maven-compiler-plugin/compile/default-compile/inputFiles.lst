@@ -17,3 +17,10 @@
 /Users/solidwang/IdeaProjects/AI-PAY/pay-core/src/main/java/com/aipay/core/mapper/OperatorPermissionMapper.java
 /Users/solidwang/IdeaProjects/AI-PAY/pay-core/src/main/java/com/aipay/core/mapper/ReconcileRecordMapper.java
 /Users/solidwang/IdeaProjects/AI-PAY/pay-core/src/main/java/com/aipay/core/mapper/RefundMapper.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-core/src/main/java/com/aipay/core/service/AppService.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-core/src/main/java/com/aipay/core/service/ChannelConfigService.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-core/src/main/java/com/aipay/core/service/ChargeService.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-core/src/main/java/com/aipay/core/service/MerchantService.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-core/src/main/java/com/aipay/core/service/NotifyService.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-core/src/main/java/com/aipay/core/service/OperatorService.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-core/src/main/java/com/aipay/core/service/RefundService.java

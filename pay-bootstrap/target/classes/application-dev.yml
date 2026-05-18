@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/ai_pay_dev?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
+
+app:
+  encrypt-key: dev-encrypt-key-32-chars-exactly!!
+  notify-base-url: http://localhost:8080
+  jwt:
+    secret-key: dev-jwt-secret-key-must-be-at-least-32-characters-long
+
+springdoc:
+  swagger-ui:
+    enabled: true
+
+logging:
+  level:
+    com.aipay: DEBUG
+    org.mybatis: DEBUG

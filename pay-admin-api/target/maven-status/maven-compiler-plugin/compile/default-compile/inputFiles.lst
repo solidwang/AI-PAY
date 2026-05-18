@@ -1,0 +1,9 @@
+/Users/solidwang/IdeaProjects/AI-PAY/pay-admin-api/src/main/java/com/aipay/admin/controller/AppController.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-admin-api/src/main/java/com/aipay/admin/controller/AuthController.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-admin-api/src/main/java/com/aipay/admin/controller/ChargeQueryController.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-admin-api/src/main/java/com/aipay/admin/controller/MerchantController.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-admin-api/src/main/java/com/aipay/admin/controller/OperatorController.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-admin-api/src/main/java/com/aipay/admin/security/AdminSecurityConfig.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-admin-api/src/main/java/com/aipay/admin/security/JwtAuthFilter.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-admin-api/src/main/java/com/aipay/admin/security/JwtTokenProvider.java
+/Users/solidwang/IdeaProjects/AI-PAY/pay-admin-api/src/main/java/com/aipay/admin/security/OperatorPrincipal.java

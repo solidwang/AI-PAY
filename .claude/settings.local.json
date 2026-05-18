@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Read(//usr/local/bin/**)",
+      "Read(//opt/homebrew/bin/**)",
+      "Read(//Users/solidwang/.sdkman/candidates/maven/current/bin/**)",
+      "Read(//usr/**)",
+      "Bash(java -version)",
+      "Bash(/usr/libexec/java_home -V)",
+      "Bash(brew install:*)",
+      "Bash(mvn -version)",
+      "Bash(mvn clean:*)",
+      "Bash(curl -s \"https://search.maven.org/solrsearch/select?q=a:alipay-sdk-java&rows=5&wt=json\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(doc.get\\('id',''\\), doc.get\\('latestVersion',''\\)\\) for doc in d['response']['docs']]\")",
+      "Bash(curl -s \"https://search.maven.org/solrsearch/select?q=g:com.alipay.sdk+AND+a:alipay-sdk-java+AND+v:4.38*&rows=5&wt=json\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\([doc.get\\('id',''\\) for doc in d['response']['docs']], indent=2\\)\\)\")",
+      "Bash(/opt/homebrew/bin/mvn test:*)",
+      "Bash(mvn compile:*)",
+      "Bash(mvn test:*)",
+      "Bash(mvn install:*)",
+      "Bash(grep -v \"^\\\\[ERROR\\\\] $\")",
+      "Bash(javap /Users/solidwang/IdeaProjects/AI-PAY/pay-core/target/classes/com/aipay/core/domain/App.class)",
+      "Bash(javap /Users/solidwang/IdeaProjects/AI-PAY/pay-common/target/classes/com/aipay/common/exception/BizException.class)",
+      "Bash(mvn dependency:resolve -pl pay-core -q)",
+      "Bash(mvn dependency:tree -pl pay-core -am)",
+      "Bash(javap -p /Users/solidwang/IdeaProjects/AI-PAY/pay-channel/pay-channel-api/target/classes/com/aipay/channel/api/model/CreateOrderRequest.class)",
+      "Bash(javac --version)",
+      "Bash(mvn dependency:tree -pl pay-core)",
+      "Bash(grep -v \"^\\\\[ERROR\\\\]\\\\s*$\")",
+      "Bash(javap -p /Users/solidwang/IdeaProjects/AI-PAY/pay-core/target/classes/com/aipay/core/domain/App.class)",
+      "Bash(mvn dependency:resolve -pl pay-core -am -q)",
+      "Bash(mvn help:effective-pom -pl pay-core -q)",
+      "Bash(cat /Users/solidwang/IdeaProjects/AI-PAY/pay-core/target/surefire-reports/*.txt)",
+      "Bash(javap -p /Users/solidwang/.m2/repository/com/github/wechatpay-apiv3/wechatpay-java-core/0.2.12/wechatpay-java-core-0.2.12.jar 'com/wechat/pay/java/core/RSAAutoCertificateConfig$Builder')",
+      "Bash(jar tf:*)"
+    ]
+  }
+}
