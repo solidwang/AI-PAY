@@ -1,0 +1,5 @@
+com/aipay/channel/wechat/WechatNativeChannel.class
+com/aipay/channel/wechat/WechatMiniprogramChannel.class
+com/aipay/channel/wechat/WechatChannelConfig.class
+com/aipay/channel/wechat/WechatH5Channel.class
+com/aipay/channel/wechat/WechatJsapiChannel.class
