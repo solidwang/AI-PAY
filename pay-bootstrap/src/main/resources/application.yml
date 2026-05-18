@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: ai-pay
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL:jdbc:mysql://localhost:3306/ai_pay?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+redisson:
+  address: ${REDIS_URL:redis://localhost:6379}
+  database: 0
+
+app:
+  encrypt-key: ${APP_ENCRYPT_KEY:dev-encrypt-key-change-in-production}
+  notify-base-url: ${APP_NOTIFY_BASE_URL:https://pay.example.com}
+  jwt:
+    secret-key: ${JWT_SECRET_KEY:dev-jwt-secret-key-change-in-production-must-be-at-least-32-chars}
+    access-token-expiry-hours: 8
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: ${SWAGGER_ENABLED:true}
+
+logging:
+  level:
+    com.aipay: INFO
+    org.mybatis: WARN
