@@ -40,11 +40,13 @@ public class WechatH5Channel implements PayChannel {
             amount.setTotal(req.getAmount());
             request.setAmount(amount);
 
-            if (req.getChannelExtra() != null && req.getChannelExtra().containsKey("scene_info")) {
-                SceneInfo sceneInfo = new SceneInfo();
-                sceneInfo.setPayerClientIp(req.getClientIp());
-                request.setSceneInfo(sceneInfo);
-            }
+            SceneInfo sceneInfo = new SceneInfo();
+            sceneInfo.setPayerClientIp(req.getClientIp() != null ? req.getClientIp() : "127.0.0.1");
+            H5Info h5Info = new H5Info();
+            h5Info.setType(req.getChannelExtra() != null && req.getChannelExtra().containsKey("h5_type")
+                ? (String) req.getChannelExtra().get("h5_type") : "Wap");
+            sceneInfo.setH5Info(h5Info);
+            request.setSceneInfo(sceneInfo);
 
             PrepayResponse response = service.prepay(request);
 
@@ -73,6 +75,7 @@ public class WechatH5Channel implements PayChannel {
 
     @Override
     public QueryResult query(String outTradeNo) {
+        log.warn("WeChat query not implemented for outTradeNo={}", outTradeNo);
         return QueryResult.builder().paid(false).build();
     }
 }

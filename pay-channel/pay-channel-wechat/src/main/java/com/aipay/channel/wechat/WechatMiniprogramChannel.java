@@ -40,6 +40,14 @@ public class WechatMiniprogramChannel implements PayChannel {
             amount.setTotal(req.getAmount());
             request.setAmount(amount);
 
+            if (req.getChannelExtra() == null || !req.getChannelExtra().containsKey("open_id")) {
+                return CreateOrderResult.builder()
+                    .success(false)
+                    .failureCode("MISSING_OPEN_ID")
+                    .failureMsg("open_id is required for Miniprogram payment")
+                    .build();
+            }
+
             Payer payer = new Payer();
             payer.setOpenid((String) req.getChannelExtra().get("open_id"));
             request.setPayer(payer);
@@ -79,6 +87,7 @@ public class WechatMiniprogramChannel implements PayChannel {
 
     @Override
     public QueryResult query(String outTradeNo) {
+        log.warn("WeChat query not implemented for outTradeNo={}", outTradeNo);
         return QueryResult.builder().paid(false).build();
     }
 }

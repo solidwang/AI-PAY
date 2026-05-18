@@ -67,6 +67,7 @@ public class WechatNativeChannel implements PayChannel {
 
     @Override
     public QueryResult query(String outTradeNo) {
+        log.warn("WeChat query not implemented for outTradeNo={}", outTradeNo);
         return QueryResult.builder().paid(false).build();
     }
 }
