@@ -1,8 +1,0 @@
-com/aipay/api/controller/GlobalExceptionHandler.class
-com/aipay/api/controller/ChargeController.class
-com/aipay/api/controller/NotifyController.class
-com/aipay/api/security/ApiKeySecurityConfig.class
-com/aipay/api/config/OpenApiConfig.class
-com/aipay/api/security/ApiKeyAuthFilter.class
-com/aipay/api/PayApiApplication.class
-com/aipay/api/controller/RefundController.class
