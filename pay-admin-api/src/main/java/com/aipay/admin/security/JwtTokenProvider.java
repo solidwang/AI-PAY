@@ -61,4 +61,11 @@ public class JwtTokenProvider {
             .parseSignedClaims(token).getPayload();
         return claims.get("merchant_id", Long.class);
     }
+
+    public boolean isAdmin(String token) {
+        Claims claims = Jwts.parser().verifyWith(key()).build()
+            .parseSignedClaims(token).getPayload();
+        Object isAdmin = claims.get("is_admin");
+        return isAdmin instanceof Number && ((Number) isAdmin).intValue() == 1;
+    }
 }

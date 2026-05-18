@@ -1,5 +1,6 @@
 package com.aipay.admin.controller;
 
+import com.aipay.admin.security.JwtTokenProvider;
 import com.aipay.admin.security.OperatorPrincipal;
 import com.aipay.core.service.OperatorService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,11 +19,15 @@ import java.util.Map;
 public class OperatorController {
 
     private final OperatorService operatorService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping
     public ResponseEntity<?> createOperator(
             @AuthenticationPrincipal OperatorPrincipal principal,
             @RequestBody Map<String, Object> body) {
+        if (!jwtTokenProvider.isAdmin(principal.token())) {
+            return ResponseEntity.status(403).body(Map.of("error", "Admin access required"));
+        }
         return ResponseEntity.ok(operatorService.createOperator(
             principal.merchantId(),
             (String) body.get("username"),
@@ -32,8 +37,12 @@ public class OperatorController {
     }
 
     @PutMapping("/{id}/permissions")
-    public ResponseEntity<?> updatePermissions(@PathVariable Long id,
+    public ResponseEntity<?> updatePermissions(@AuthenticationPrincipal OperatorPrincipal principal,
+                                                @PathVariable Long id,
                                                 @RequestBody List<Map<String, Object>> perms) {
+        if (!jwtTokenProvider.isAdmin(principal.token())) {
+            return ResponseEntity.status(403).body(Map.of("error", "Admin access required"));
+        }
         operatorService.updatePermissions(id, perms);
         return ResponseEntity.ok(Map.of("result", "updated"));
     }

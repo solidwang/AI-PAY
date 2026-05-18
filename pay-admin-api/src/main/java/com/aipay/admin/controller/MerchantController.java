@@ -1,10 +1,13 @@
 package com.aipay.admin.controller;
 
+import com.aipay.admin.security.JwtTokenProvider;
+import com.aipay.admin.security.OperatorPrincipal;
 import com.aipay.core.service.AppService;
 import com.aipay.core.service.MerchantService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -17,6 +20,7 @@ public class MerchantController {
 
     private final MerchantService merchantService;
     private final AppService appService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping
     public ResponseEntity<?> listMerchants(
@@ -26,7 +30,11 @@ public class MerchantController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createMerchant(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> createMerchant(@AuthenticationPrincipal OperatorPrincipal principal,
+                                             @RequestBody Map<String, String> body) {
+        if (!jwtTokenProvider.isAdmin(principal.token())) {
+            return ResponseEntity.status(403).body(Map.of("error", "Admin access required"));
+        }
         return ResponseEntity.ok(merchantService.createMerchant(
             body.get("name"), body.get("contact_email"), body.get("contact_phone")));
     }
@@ -37,8 +45,12 @@ public class MerchantController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateMerchant(@PathVariable Long id,
-                                              @RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> updateMerchant(@AuthenticationPrincipal OperatorPrincipal principal,
+                                             @PathVariable Long id,
+                                             @RequestBody Map<String, Object> body) {
+        if (!jwtTokenProvider.isAdmin(principal.token())) {
+            return ResponseEntity.status(403).body(Map.of("error", "Admin access required"));
+        }
         merchantService.updateMerchant(id, (String) body.get("name"),
             (String) body.get("contact_email"), (String) body.get("contact_phone"),
             body.containsKey("status") ? ((Number) body.get("status")).intValue() : null);
@@ -51,8 +63,12 @@ public class MerchantController {
     }
 
     @PostMapping("/{id}/apps")
-    public ResponseEntity<?> createApp(@PathVariable Long id,
+    public ResponseEntity<?> createApp(@AuthenticationPrincipal OperatorPrincipal principal,
+                                        @PathVariable Long id,
                                         @RequestBody Map<String, String> body) {
+        if (!jwtTokenProvider.isAdmin(principal.token())) {
+            return ResponseEntity.status(403).body(Map.of("error", "Admin access required"));
+        }
         return ResponseEntity.ok(appService.createApp(id, body.get("name")));
     }
 }

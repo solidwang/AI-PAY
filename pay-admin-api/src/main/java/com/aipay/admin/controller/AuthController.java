@@ -24,7 +24,13 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> body) {
-        Operator op = operatorService.authenticate(body.get("username"), body.get("password"));
+        String username = body.get("username");
+        String password = body.get("password");
+        if (username == null || password == null) {
+            return ResponseEntity.badRequest()
+                .body(Map.of("error", Map.of("code", "invalid_request", "message", "username and password are required")));
+        }
+        Operator op = operatorService.authenticate(username, password);
         if (op == null) {
             return ResponseEntity.status(401)
                 .body(Map.of("error", Map.of("code", "auth_failed", "message", "Invalid credentials")));
