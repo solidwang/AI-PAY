@@ -56,6 +56,9 @@ public class ChargeController {
             @AuthenticationPrincipal App app,
             @PathVariable String chargeId) {
         Charge charge = chargeService.findByChargeId(chargeId);
+        if (charge == null) {
+            return ResponseEntity.status(404).body(Map.of("error", Map.of("code", "not_found", "message", "Charge not found")));
+        }
         if (!app.getId().equals(charge.getAppId())) {
             return ResponseEntity.status(403).body(Map.of("error", Map.of("code", "forbidden", "message", "Access denied")));
         }
